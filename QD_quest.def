@@ -1,0 +1,79 @@
+&outputs !Select output and computation modules, yes ("y") or ("no") 
+inbox    = "y" !For phase matching directions, read coordinates in space, orient mus ... 
+rdm_ori  = "y" !For phase matching directions, read coordinates in space, orient mus ... 
+get_sp   = "n" !recover sampling from a previous Etransitions_0.dat
+get_ei   = "y" !Generates eigenstate vectors and TDM 
+Dyn_0    = "n" !Should I perform dynamics in 0 order basis?
+Dyn_ei   = "y" !Should I perform dynamics in eigenstate basis?
+Dyn_L    = "n" !Should I perform Liouville quantum dynamics?
+Dec_L    = "n" 
+doAbs    = "n" !Request absorption spectrum
+doFT     = "y" !Perform FT of coherences for all systems
+nofiles  = "n" !deletes all individual files
+noMat    = "n" !deletes all individual files
+doCovar  = "n" !make covar from single FT vectors
+/
+
+&elecSt !Parameters of CdSe QD and the model
+model     =  "SB"     !Choose between single band 9*9 (SB), Forster 5*5 (FO) or Fine structure 25*25 (FS)
+Von       =  "y"      !y for coupling on, n for coupling off
+me        =  0.13d0        !Effective mass of particles in electron states (*m0)
+mh        =  0.82d0        !Effective mass of particles in hole states (*m0)
+eps       =  9.56d0        !Bulk dielectric constant
+epsout    =  2.3d0         !Environment (ligand/solvant) dielectric constant
+V0eV      =  1.75d0        !Bulk gap in eV
+omegaLO   =  5.99585d12  !Phonon resonnance (for intradot dielectric correction)
+slope     =  50.d9        !Slope of dielectric step function
+side      =  0.5d-9      !Width of side buffer of integration box
+/ 
+
+&fineStruc !Parameters of the fine structure
+Kas  = 0.012d0 
+Kbs  = 0.012d0
+Kcs  = 0.012d0
+Kpp  = 0.0d0
+Dso1 = 0.220d0
+Dso2 = 0.220d0
+Dxf  = 0.025d0
+/
+
+&pulses !Parameters of quantum dynamic and pulses
+integ      = "RK6"       !Choose between integrator RK4 or RK6
+npulses    = 3           !Number of pulses (up to 3)
+t01        = 50.d0     !Pulse 1 centered at (s)
+t02        = 150.d0     !Pulse 2 centered at (s)
+t03        = 250.d0     !Pulse 3 centered at (s)
+timestep   = 0.01d0      !Time step of quantum dynamic
+totaltime  = 1000.d0     !Total time simulated (s)
+omega01    = 0.592d15      !Frequency (s-1)
+omega02    = 0.592d15      !Frequency (s-1)
+omega03    = 0.592d15      !Frequency (s-1)
+width01    = 6.0d0       !Width of the pulse (s) 
+width02    = 6.0d0       !Width of the pulse (s) 
+width03    = 6.0d0       !Width of the pulse (s) 
+Ed01       = 0.02d9     !Field strength (V/m so far)
+Ed02       = 0.02d9     !Field strength (V/m so far)
+Ed03       = 0.02d9     !Field strength (V/m so far)
+CEP1       = '0'       !CEP, r for random, p for pi  
+CEP2       = '0'       !CEP, r for random, p for pi
+CEP3       = '0'       !CEP, r for random, p for pi
+pgeom      = "boxcar" !useless so far (boxcar / triang / straig)
+vertex     = 8.d0     !vertex angle of beam crossing (inbox=y and 3 pulses)
+/
+
+&syst !Parameters of the single dot
+nQDA      = 0          !Number of dimers
+nQDB      = 1          !Number of dimers
+nhomoA    = 0        !Number of dimers
+nhomoB    = 0          !Number of dimers
+nhetero   = 0        !Number of dimers
+dispQD    = 0.00d0      !Dispersion of QD radius
+idlink    = 55         !Linker length
+aA        = 1.2d-9      !Radius of QDA
+aB        = 1.7d-9      !Radius of QDA
+/
+
+&FT !Parameters of the FT
+FTpow = 20
+/
+
