@@ -16,11 +16,9 @@ allocate(Eg(1000))
 allocate(TDM(1000))
 allocate(minEeA(10),minEhA(10),minEeB(10),minEhB(10),source=0._dp)
 allocate(pow(0:ntime+1))
-allocate(powtemp(0:ntime+1))
-allocate(pow_gaus(0:ntime+1))
-allocate(pulses(0:ntime+1))
 allocate(pow_pol(npol,0:ntime+1))
-allocate(pow_pol_gaus(npol,0:ntime+1))
+allocate(powtemp(0:ntime+1))
+allocate(pulses(0:ntime+1))
 
 open(newunit=Tmat_0_f      ,file='TransMat.dat')          
 open(newunit=Tmat_ei_f     ,file='TransMat_ei.dat')       
@@ -215,22 +213,39 @@ close(H_ex_f);close(H_JK_f);close(H_ei_f);close(Etr_0_f);close(TDip_ei_f);close(
 
 !Write DipSpec sum of all systems + multiplied by a gaussian 
 timestep  = timestep  * t_au
-totaltime = totaltime * t_au
+totaltime = (totaltime-t03) * t_au
+ntime     = nt
+
+!rescale polarization
+
+allocate(pow_gaus(0:nt+1))
+allocate(pow_pol_gaus(npol,0:nt+1))
+allocate(pow_poln(npol,0:nt+1))
+allocate(pown(0:nt+1))
+allocate(pulsesn(0:nt+1))
+
+do i=0,nt-1
+pown(i)       = pow(i+nt3) 
+pulsesn(i)    = pulses(i+nt3) 
+if ( inbox .eq. 'y' ) then
+pow_poln(:,i) = pow_pol(:,i+nt3)
+endif
+enddo
 
 do t=0,ntime
 
 time = t*timestep
 
-pow_gaus(t)=exp(-1._dp*((time-totaltime/2._dp)*timestep)**2._dp/(2._dp*(totaltime*timestep/15._dp)**2._dp))*(pow(t)/nsys)
+pow_gaus(t)=exp(-1._dp*((time-totaltime/2._dp)*timestep)**2._dp/(2._dp*(totaltime*timestep/15._dp)**2._dp))*(pown(t)/nsys)
 
 if ( inbox .eq. 'y' ) then
 pow_pol_gaus(39,t)=&
-   exp(-1._dp*((time-totaltime/2._dp)*timestep)**2._dp/(2._dp*(totaltime*timestep/15._dp)**2._dp))*(pow_pol(39,t)/nsys)
+   exp(-1._dp*((time-totaltime/2._dp)*timestep)**2._dp/(2._dp*(totaltime*timestep/15._dp)**2._dp))*(pow_poln(39,t)/nsys)
 pow_pol_gaus(41,t)=&
-   exp(-1._dp*((time-totaltime/2._dp)*timestep)**2._dp/(2._dp*(totaltime*timestep/15._dp)**2._dp))*(pow_pol(41,t)/nsys)
+   exp(-1._dp*((time-totaltime/2._dp)*timestep)**2._dp/(2._dp*(totaltime*timestep/15._dp)**2._dp))*(pow_poln(41,t)/nsys)
 !if ( nofiles .eq. 'n' ) then
-write(DipSpec_39_f,*) time, dreal(pow_pol(39,t)), dimag(pow_pol(39,t))
-write(DipSpec_41_f,*) time, dreal(pow_pol(41,t)), dimag(pow_pol(41,t))
+write(DipSpec_39_f,*) time, dreal(pow_poln(39,t)), dimag(pow_poln(39,t))
+write(DipSpec_41_f,*) time, dreal(pow_poln(41,t)), dimag(pow_poln(41,t))
 !endif
 endif
 
@@ -238,19 +253,19 @@ write(DipSpec,*) time, pow(t), pulses(t)
 
 enddo 
 
-if ( inbox .eq. 'y' ) then
-
-do pol=1,npol
-integPol     = dcmplx(0._dp,0._dp)
-integPolconv = dcmplx(0._dp,0._dp)
-do t=0,ntime
-time = t*timestep
-integPol = integPol + timestep*abs(pow_pol(pol,t) + pow_pol(pol,t+1))/2._dp
-enddo
-write(P_Match_f,*) pol, l1(pol), l2(pol), l3(pol), integPol
-enddo
-
-endif
+!if ( inbox .eq. 'y' ) then
+!
+!do pol=1,npol
+!integPol     = dcmplx(0._dp,0._dp)
+!integPolconv = dcmplx(0._dp,0._dp)
+!do t=0,ntime
+!time = t*timestep
+!integPol = integPol + timestep*abs(pow_pol(pol,t) + pow_pol(pol,t+1))/2._dp
+!enddo
+!write(P_Match_f,*) pol, l1(pol), l2(pol), l3(pol), integPol
+!enddo
+!
+!endif
 
 FTscale = h/(elec*(2._dp**FTpow)*timestep)
 !gives the scale of FT vectors
@@ -271,7 +286,7 @@ allocate(xpulse(0:nint(2._dp**FTpow)))
 
 do t=0,ntime
 xpow_gaus(t) = dcmplx(pow_gaus(t)  ,0._dp)
-xpulse(t)    = dcmplx(pulses(t),0._dp)
+xpulse(t)    = dcmplx(pulsesn(t),0._dp)
 enddo
 
 do t=ntime+1,nint(2.d0**FTpow)
@@ -326,45 +341,5 @@ endif
 deallocate(pow,pow_gaus,xpow_gaus,xpulse,pulses,wft,wftp)
 
 endif
-
-!if ( doCovar .eq. 'y' ) then
-!
-!allocate(Scov(0:nFT+1,0:nFT+1))
-!
-!open(61,file='Allcov.dat')
-!
-!t=0
-!do while ( t*FTscale .le. 4.d0 )
-!t2=0
-!do while ( t2*FTscale .le. 4.d0 )
-!
-!do k=1,nsys
-!Scov(t,t2) = Scov(t,t2) + sum(dreal(wftf_s(k,t))*dreal(wftf_s(:,t2)))
-!enddo
-!
-!t2 = t2 + 5
-!enddo
-!t = t + 5
-!enddo
-!
-!t=0
-!do while ( t*FTscale .le. 4.d0 )
-!t2=0
-!do while ( t2*FTscale .le. 4.d0 )
-!write(61,'(2f10.6,ES15.6E3)') t*h/(elec*5.24288d-12), t2*h/(elec*5.24288d-12), Scov(t,t2)
-!t2 = t2 + 5
-!enddo
-!write(61,*)
-!t = t + 5
-!enddo
-!
-!endif
-
-!call system('sleep 1')
-!call system('find . -size 0 -delete')
-
-!!$OMP END DO
-
-!$OMP END PARALLEL DO
 
 end

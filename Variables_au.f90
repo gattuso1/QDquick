@@ -28,7 +28,7 @@ implicit none
    integer :: Tmat_avg_f, Tmat_avgx_f, Tmat_avgy_f, Tmat_avgz_f, Etr_avg_f, popc_avg_f, Re_c_avg_f, Im_c_avg_f, TransAbs_avg
    integer :: DipSpec_avg, P_Match_avg, TransAbs_avg_7_f, TransAbs_avg_17_f, TransAbs_avg_33_f, TransAbs_avg_39_f, TransAbs_avg_41_f
    integer :: TransAbs_avg_43_f, TransAbs_avg_44_f, DipSpec_avg_7_f, DipSpec_avg_17_f, DipSpec_avg_33_f, DipSpec_avg_39_f
-   integer :: DipSpec_avg_41_f, DipSpec_avg_43_f, DipSpec_avg_44_f, error, label_0, sigfit, Dmat, rhofit
+   integer :: DipSpec_avg_41_f, DipSpec_avg_43_f, DipSpec_avg_44_f, error, label_0, sigfit, Dmat, rhofit, nt, nt3
    integer,allocatable :: seed(:),icol(:,:),irow(:,:),iwork2(:),zero(:), values(:)
    real(dp) :: a13_1d_he,a13_2d_he,a13_3d_he,a13_4d_he,a15_1d_he,a15_2d_he,a15_3d_he,a15_4d_he,a17_1d_he,a17_2d_he,a17_3d_he,&
                a17_4d_he,a24_1d_he,a24_2d_he,a24_3d_he,a24_4d_he,a26_1d_he,a26_2d_he,a26_3d_he,a26_4d_he,a28_1d_he,a28_2d_he,&
@@ -72,7 +72,7 @@ implicit none
    real(dp),allocatable :: OverlapAna_h1e(:), OverlapAna_h2e(:), Cb_Num_eh1(:), Cb_Num_eh1_eh2(:), Cb_Num_eh2(:)
    real(dp),allocatable :: TransDip_Num_h1e(:), TransDip_Num_h2e(:), work(:), lambda(:)
    real(dp),allocatable :: minEe(:,:),minEh(:,:), minEeA(:),minEeB(:)
-   real(dp),allocatable :: minEhA(:),minEhB(:)
+   real(dp),allocatable :: minEhA(:),minEhB(:), pown(:), pulsesn(:)
    real(dp),allocatable :: TransDip_Ana_h1e(:), TransDip_Ana_h2e(:), Oscillator_Ana_h1e(:), Oscillator_Ana_h2e(:), Transvec(:)
    real(dp),allocatable :: ExctCoef_h1e(:), ExctCoef_h2e(:), Ham(:,:), E0(:), c0(:), TransHam(:,:), Hamt(:,:,:), c(:,:)
    real(dp),allocatable :: TransMat_ei(:,:), TransHam0(:,:), Ham_0(:), Ham_dir(:,:), Ham_ex(:,:), Ham_ei(:,:), Ham_l(:,:), haml(:,:)
@@ -91,7 +91,7 @@ implicit none
  complex(8),allocatable :: xc_ei_av(:,:), xctemp(:),xlfield(:,:),xc_L(:,:), xpow_gaus(:),xpulse(:),wft(:),wftp(:),wftf(:),xhugo(:)
  complex(8),allocatable :: wft_pol(:,:),wftf_pol(:,:), pow_pol_diff(:), wft_s(:,:), wftf_s(:,:), xpow_gaus_s(:), xpulse2(:)
  complex(8),allocatable :: k1_rho(:,:), k2_rho(:,:), k3_rho(:,:), k4_rho(:,:), k5_rho(:,:), k6_rho(:,:), k7_rho(:,:), k8_rho(:,:)
- complex(8),allocatable :: xc_rho(:,:,:), wftf_t1(:)
+ complex(8),allocatable :: xc_rho(:,:,:), wftf_t1(:), pow_poln(:,:)
 
 contains 
 
@@ -122,8 +122,13 @@ npol       = 146
 call init_random_seed()
 
 timestep   =  timestep  * 1.e-15_dp/t_au  
-!totaltime  =  (t03+totaltime) * 1.e-15_dp/t_au 
-totaltime  =  (t03+totaltime) * 1.e-15_dp/t_au 
+!compute total length of simulation
+selectcase(npulses)
+case(0) ; totaltime = (totaltime)     * 1.e-15_dp/t_au
+case(1) ; totaltime = (totaltime+t01) * 1.e-15_dp/t_au
+case(2) ; totaltime = (totaltime+t02) * 1.e-15_dp/t_au
+case(3) ; totaltime = (totaltime+t03) * 1.e-15_dp/t_au
+endselect
 t01        =  t01       * 1.e-15_dp/t_au       
 t02        =  t02       * 1.e-15_dp/t_au       
 t03        =  t03       * 1.e-15_dp/t_au       
@@ -138,6 +143,8 @@ Ed02       =  Ed02/E_au
 Ed03       =  Ed03/E_au        
 xh         =  dcmplx(timestep,0._dp)
 ntime      =  nint(totaltime/timestep)
+nt         =  nint((totaltime-t03)/timestep)
+nt3        =  nint(t03/timestep)
 
 selectcase(CEP1)
 case('r') ; call random_number(phase01) ; phase01 = phase01 * 2._dp * pi
