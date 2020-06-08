@@ -13,7 +13,7 @@ implicit none
    character*64 :: Re_c, Im_c, syst_n, Re_c_l, Im_c_L, cov, cov2, Pop_c_L
    character*1  :: o_Norm, o_Over, o_Coul, o_DipS, o_Osci, o_Exti, o_DipD, dyn, hamilt, get_ei, finest, get_sp
    character*1  :: Dyn_0, Dyn_ei, inbox, Dyn_L,doFT,CEP1,CEP2,CEP3,nofiles, doCovar,doAbs
-   character*1  :: rdm_ori, noMat, Dec_L, Von
+   character*1  :: rdm_ori, noMat, Dec_L, Von, random
    logical :: isit
    integer,dimension(10) :: matrices
    integer :: Pulse_f,Tmat_0_f,Tmat_ei_f,Tmat_x_f,Tmat_y_f,Tmat_z_f,H_0_f,H_dir_f,H_ex_f,H_JK_f,TransAbs, DipSpec_conv_f
@@ -97,7 +97,7 @@ contains
 
 subroutine getVariables
 
-NAMELIST /outputs/   inbox,rdm_ori,get_sp,get_ei,Dyn_0,Dyn_ei,Dyn_L,Dec_L,&
+NAMELIST /outputs/   inbox,rdm_ori,random,get_sp,get_ei,Dyn_0,Dyn_ei,Dyn_L,Dec_L,&
                      doAbs,doFT,nofiles,noMat,doCovar
 NAMELIST /elecSt/    model,Von,me,mh,eps,epsout,V0eV,omegaLO,slope,side
 NAMELIST /fineStruc/ Kas,Kbs,Kcs,Kpp,Dso1,Dso2,Dxf
@@ -119,7 +119,15 @@ me         = me*m0
 mh         = mh*m0
 V0         = V0eV*elec
 npol       = 146
+
+if ( random .eq. "n" ) then
+seed=(/-2117701607,858902660,-697989407,-1577925464,1615039489,-1032857955,1012714915,2074081609,-1494161109,30058385,377893471,&
+239275312,-904835107,-995717987,-7444346,-1683921053,756133017,1938972045,872372015,756209296,-317914301,982226016,1621624076,&
+1267757291,-1711641800,-1450812132,1814217628,-39936172,-768213310,873803816,343426819,661577329,-1815877535/)
+CALL RANDOM_SEED(PUT=SEED)
+elseif ( random .eq. "y" ) then
 call init_random_seed()
+endif
 
 timestep   =  timestep  * 1.e-15_dp/t_au  
 !compute total length of simulation

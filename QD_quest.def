@@ -1,6 +1,7 @@
 &outputs !Select output and computation modules, yes ("y") or ("no") 
 inbox    = "n" !For phase matching directions, read coordinates in space, orient mus ... 
 rdm_ori  = "n" !For phase matching directions, read coordinates in space, orient mus ... 
+random   = "n" !random seed or no random seed
 get_sp   = "n" !recover sampling from a previous Etransitions_0.dat
 get_ei   = "y" !Generates eigenstate vectors and TDM 
 Dyn_0    = "n" !Should I perform dynamics in 0 order basis?

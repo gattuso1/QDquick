@@ -252,6 +252,8 @@ write(DipSpec_41_f,*) time, dreal(pow_poln(41,t)), dimag(pow_poln(41,t))
 endif
 
 pow_gaus(-t) = pow_gaus(t)
+pow_pol_gaus(:,-t) = pow_pol_gaus(:,t)
+pow_pol_gaus(:,-t) = pow_pol_gaus(:,t)
 
 enddo 
 

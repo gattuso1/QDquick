@@ -33,6 +33,7 @@ real(kind=8) function r8_normal_ab(a,b)
 
   call random_number(r1)
   call random_number(r2)
+
   x = sqrt ( - 2.0D+00 * log ( r1 ) ) * cos ( 2.0D+00 * pi * r2 )
 
   r8_normal_ab = a + b * x
