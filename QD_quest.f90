@@ -218,15 +218,17 @@ ntime     = nt
 
 !rescale polarization
 
-allocate(pow_gaus(0:nt+1))
-allocate(pow_pol_gaus(npol,0:nt+1))
-allocate(pow_poln(npol,0:nt+1))
-allocate(pown(0:nt+1))
-allocate(pulsesn(0:nt+1))
+allocate(pow_gaus(-(nt+1):nt+1))
+allocate(pow_pol_gaus(npol,-(nt+1):nt+1))
+allocate(pow_poln(npol,-(nt+1):nt+1))
+allocate(pown(-(nt+1):nt+1))
+allocate(pulsesn(-(nt+1):nt+1))
 
 do i=0,nt-1
 pown(i)       = pow(i+nt3) 
+pown(-i)      = pown(i) 
 pulsesn(i)    = pulses(i+nt3) 
+pulsesn(-i)   = pulsesn(i)
 if ( inbox .eq. 'y' ) then
 pow_poln(:,i) = pow_pol(:,i+nt3)
 endif
@@ -249,9 +251,14 @@ write(DipSpec_41_f,*) time, dreal(pow_poln(41,t)), dimag(pow_poln(41,t))
 !endif
 endif
 
-write(DipSpec,*) time, pow(t), pulses(t)
+pow_gaus(-t) = pow_gaus(t)
 
 enddo 
+
+do t=-ntime,ntime
+time = t*timestep
+write(DipSpec,*) time, pown(t), pow_gaus(t), pulsesn(t)
+enddo
 
 !if ( inbox .eq. 'y' ) then
 !
@@ -277,31 +284,38 @@ nFT=t
 
 if ( doFT .eq. 'y' ) then
 
-allocate(wft(0:nFT+1))
-allocate(wft_pol(npol,0:nFT+1))
-allocate(wftp(0:nFT+1))
-allocate(wftf(0:nFT+1))
+!allocate(xpow_gaus(-nint(2._dp**FTpow):nint(2._dp**FTpow)))
 allocate(xpow_gaus(0:nint(2._dp**FTpow)))
-allocate(xpulse(0:nint(2._dp**FTpow)))
+allocate(xpow_gaus2(-nint(2._dp**FTpow):nint(2._dp**FTpow)))
 
 do t=0,ntime
-xpow_gaus(t) = dcmplx(pow_gaus(t)  ,0._dp)
-xpulse(t)    = dcmplx(pulsesn(t),0._dp)
+xpow_gaus(t)   = dcmplx(pow_gaus(t)  ,0._dp)
+!xpow_gaus(-t)  = dcmplx(0._dp  ,0._dp)
+!xpulse(t)     = dcmplx(pulsesn(t),0._dp)
 enddo
 
 do t=ntime+1,nint(2.d0**FTpow)
-xpow_gaus(t) = dcmplx(0._dp,0._dp)
-xpulse(t)    = dcmplx(0._dp,0._dp)
+xpow_gaus(t)  = dcmplx(0._dp,0._dp)
+!xpow_gaus(-t) = dcmplx(0._dp,0._dp)
+!xpulse(t)     = dcmplx(0._dp,0._dp)
+!xpulse(-t)    = dcmplx(0._dp,0._dp)
 enddo
 
-call fft(xpulse)
+!call fft(xpulse)
 call fft(xpow_gaus)
 
-t=0
+do t=0,nint(2.d0**FTpow)
+xpow_gaus2(-t) = dconjg(xpow_gaus(t))
+xpow_gaus2(t) = xpow_gaus(t)
+enddo
+
+!t=0
+t=-nFT
 do while ( t*FTscale .le. 4._dp ) 
-wftf(t)= -2._dp * dimag(sqrt(dreal(xpow_gaus(t))**2+dimag(xpow_gaus(t))**2) * dconjg(xpulse(t)))
+!wftf(t)= -2._dp * dimag(sqrt(dreal(xpow_gaus(t))**2+dimag(xpow_gaus(t))**2) * dconjg(xpulse(t)))
 !if ( nofiles .eq. 'n' ) then
-write(TransAbs,*) t*FTscale, dreal(wftf(t)), dreal(xpow_gaus(t)), dimag(xpow_gaus(t)), abs(xpulse(t))
+write(TransAbs,*) t*FTscale, abs(xpow_gaus2(t)), dreal(xpow_gaus2(t)), dimag(xpow_gaus2(t))
+!write(TransAbs,*) t*FTscale, dreal(wftf(t)), dreal(xpow_gaus(t)), dimag(xpow_gaus(t)), abs(xpulse(t))
 !endif
 t = t + 1 
 enddo
@@ -311,6 +325,7 @@ enddo
 if ( inbox .eq. 'y' ) then
 
 allocate(xpow_pol(44,0:nint(2._dp**FTpow)))
+allocate(xpow_pol2(44,-nint(2._dp**FTpow):nint(2._dp**FTpow)))
 allocate(wftf_pol(44,0:nFT+1))
 
 do t=0,ntime
@@ -327,10 +342,15 @@ call fft(xpow_pol(39,:))
 call fft(xpow_pol(41,:))
 !enddo
 
-t=0
+do t=0,nint(2.d0**FTpow)
+xpow_pol2(:,-t) = dconjg(xpow_pol(:,t))
+xpow_pol2(:,t) = xpow_pol(:,t)
+enddo
+
+t=-nFT
 do while ( t*FTscale .le. 4.d0 )
-write(TransAbs_39_f,*) t*FTscale, dreal(xpow_pol(39,t)), dimag(xpow_pol(39,t)), abs(xpow_pol(39,t))
-write(TransAbs_41_f,*) t*FTscale, dreal(xpow_pol(41,t)), dimag(xpow_pol(41,t)), abs(xpow_pol(41,t))
+write(TransAbs_39_f,*) t*FTscale, abs(xpow_pol2(39,t)), dreal(xpow_pol2(39,t)), dimag(xpow_pol2(39,t))
+write(TransAbs_41_f,*) t*FTscale, abs(xpow_pol2(41,t)), dreal(xpow_pol2(41,t)), dimag(xpow_pol2(41,t))
 t = t + 1
 enddo
 
@@ -338,7 +358,7 @@ deallocate(xpow_pol,wftf_pol)
 
 endif
 
-deallocate(pow,pow_gaus,xpow_gaus,xpulse,pulses,wft,wftp)
+!deallocate(pow,pow_gaus,xpow_gaus,xpulse,pulses,wft,wftp)
 
 endif
 

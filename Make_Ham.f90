@@ -174,6 +174,8 @@ Ham = Ham/Energ_au
 Ham_dir = Ham_dir/Energ_au
 Ham_ex = Ham_ex/Energ_au
 
+if ( inbox .eq. "y" ) then
+
 if ( rdm_ori .eq. "y" ) then
 
 call random_number(psirot)
@@ -219,6 +221,35 @@ TransHam_l(4,8,:) = matmul(rotmat,eTDM(4,8,:))*(TransDip_Fit_ee_he(aRB,aRA))
 TransHam_l(5,6,:) = matmul(rotmat,eTDM(5,6,:))*(TransDip_Ana_h1h2A)
 TransHam_l(7,8,:) = matmul(rotmat,eTDM(7,8,:))*(TransDip_Ana_h1h2B)
 
+elseif ( rdm_ori .eq. "n" ) then
+
+TransHam_l(0,1,:) = eTDM(0,1,:)*(TransDip_Ana_h1eA)
+TransHam_l(0,2,:) = eTDM(0,2,:)*(TransDip_Ana_h2eA)
+TransHam_l(0,3,:) = eTDM(0,3,:)*(TransDip_Ana_h1eB)
+TransHam_l(0,4,:) = eTDM(0,4,:)*(TransDip_Ana_h2eB)
+TransHam_l(0,5,:) = eTDM(0,5,:)*(TransDip_Fit_h1e_he(aRB,aRA))
+TransHam_l(0,6,:) = eTDM(0,6,:)*(TransDip_Fit_h2e_he(aRB,aRA))
+TransHam_l(0,7,:) = eTDM(0,7,:)*(TransDip_Fit_h1e_he(aRA,aRB))
+TransHam_l(0,8,:) = eTDM(0,8,:)*(TransDip_Fit_h2e_he(aRA,aRB))
+TransHam_l(1,2,:) = eTDM(1,2,:)*(TransDip_Ana_h1h2A)
+TransHam_l(1,5,:) = eTDM(1,5,:)*(TransDip_Fit_ee_he(aRB,aRA))
+TransHam_l(1,7,:) = eTDM(1,7,:)*(TransDip_Fit_h1h1_he(aRB,aRA))
+TransHam_l(1,8,:) = eTDM(1,8,:)*(TransDip_Fit_h1h2_he(aRA,aRB))
+TransHam_l(2,6,:) = eTDM(2,6,:)*(TransDip_Fit_ee_he(aRB,aRA))
+TransHam_l(2,7,:) = eTDM(2,7,:)*(TransDip_Fit_h1h2_he(aRB,aRA))
+TransHam_l(2,8,:) = eTDM(2,8,:)*(TransDip_Fit_h2h2_he(aRB,aRA))
+TransHam_l(3,4,:) = eTDM(3,4,:)*(TransDip_Ana_h1h2B)
+TransHam_l(3,5,:) = eTDM(3,5,:)*(TransDip_Fit_h1h1_he(aRB,aRA))
+TransHam_l(3,6,:) = eTDM(3,6,:)*(TransDip_Fit_h1h2_he(aRB,aRA))
+TransHam_l(3,7,:) = eTDM(3,7,:)*(TransDip_Fit_ee_he(aRB,aRA))
+TransHam_l(4,5,:) = eTDM(4,5,:)*(TransDip_Fit_h1h2_he(aRA,aRB))
+TransHam_l(4,6,:) = eTDM(4,6,:)*(TransDip_Fit_h2h2_he(aRB,aRA))
+TransHam_l(4,8,:) = eTDM(4,8,:)*(TransDip_Fit_ee_he(aRB,aRA))
+TransHam_l(5,6,:) = eTDM(5,6,:)*(TransDip_Ana_h1h2A)
+TransHam_l(7,8,:) = eTDM(7,8,:)*(TransDip_Ana_h1h2B)
+
+endif
+
 do i=0,nstates-1
 do j=i+1,nstates-1
 TransHam_l(j,i,:) = TransHam_l(i,j,:)
@@ -227,7 +258,7 @@ enddo
 
 TransHam_l = TransHam_l/D_to_au
 
-elseif ( rdm_ori .eq. "n" ) then
+elseif ( inbox .eq. "n" ) then
 
 TransHam(0,1) = TransDip_Ana_h1eA
 TransHam(0,2) = TransDip_Ana_h2eA
@@ -332,6 +363,8 @@ Ham = Ham/Energ_au
 Ham_dir = Ham_dir/Energ_au
 Ham_ex = Ham_ex/Energ_au
 
+if ( inbox .eq. "y" ) then
+
 if ( rdm_ori .eq. "y" ) then
 
 call random_number(psirot)
@@ -359,6 +392,17 @@ TransHam_l(0,4,:) = matmul(rotmat,eTDM(0,4,:))*(TransDip_Ana_h2eB)
 TransHam_l(1,2,:) = matmul(rotmat,eTDM(1,2,:))*(TransDip_Ana_h1h2A)
 TransHam_l(3,4,:) = matmul(rotmat,eTDM(3,4,:))*(TransDip_Ana_h1h2B)
 
+elseif ( rdm_ori .eq. "n" ) then
+
+TransHam_l(0,1,:) = eTDM(0,1,:)*(TransDip_Ana_h1eA)
+TransHam_l(0,2,:) = eTDM(0,2,:)*(TransDip_Ana_h2eA)
+TransHam_l(0,3,:) = eTDM(0,3,:)*(TransDip_Ana_h1eB)
+TransHam_l(0,4,:) = eTDM(0,4,:)*(TransDip_Ana_h2eB)
+TransHam_l(1,2,:) = eTDM(1,2,:)*(TransDip_Ana_h1h2A)
+TransHam_l(3,4,:) = eTDM(3,4,:)*(TransDip_Ana_h1h2B)
+
+endif
+
 do i=0,nstates-1
 do j=i+1,nstates-1
 TransHam_l(j,i,:) = TransHam_l(i,j,:)
@@ -367,7 +411,7 @@ enddo
 
 TransHam_l = TransHam_l/D_to_au
 
-elseif ( rdm_ori .eq. "n" ) then
+elseif ( inbox .eq. "n" ) then
 
 TransHam(0,1) = TransDip_Ana_h1eA
 TransHam(0,2) = TransDip_Ana_h2eA
@@ -423,6 +467,8 @@ Ham = Ham/Energ_au
 Ham_dir = Ham_dir/Energ_au
 Ham_ex = Ham_ex/Energ_au
 
+if ( inbox .eq. "y" ) then
+
 if ( rdm_ori .eq. "y" ) then
 
 call random_number(psirot)
@@ -447,12 +493,13 @@ TransHam_l(0,1,:) = matmul(rotmat,eTDM(0,1,:))*(TransDip_Ana_h1eA)
 TransHam_l(0,2,:) = matmul(rotmat,eTDM(0,2,:))*(TransDip_Ana_h2eA)
 TransHam_l(1,2,:) = matmul(rotmat,eTDM(1,2,:))*(TransDip_Ana_h1h2A)
 
-!write(6,*) n, TransHam_l(0,1,:), norm2(TransHam_l(0,1,:)), &
-!TransHam_l(0,2,:), norm2(TransHam_l(0,2,:)), &
-!TransHam_l(1,2,:), norm2(TransHam_l(1,2,:))
-!write(6,*) eTDM(0,1,:), norm2(eTDM(0,1,:))
-!write(6,*) TransHam_l(0,2,:)
-!write(6,*) TransHam_l(1,2,:)
+elseif ( rdm_ori .eq. "n" ) then
+
+TransHam_l(0,1,:) = eTDM(0,1,:)*(TransDip_Ana_h1eA)
+TransHam_l(0,2,:) = eTDM(0,2,:)*(TransDip_Ana_h2eA)
+TransHam_l(1,2,:) = eTDM(1,2,:)*(TransDip_Ana_h1h2A)
+
+endif
 
 do i=0,nstates-1
 do j=i+1,nstates-1
@@ -462,7 +509,7 @@ enddo
 
 TransHam_l = TransHam_l/D_to_au
 
-elseif  ( rdm_ori .eq. "n" ) then
+elseif  ( inbox .eq. "n" ) then
 
 TransHam(0,1) = TransDip_Ana_h1eA
 TransHam(0,2) = TransDip_Ana_h2eA

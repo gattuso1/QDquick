@@ -1,16 +1,16 @@
 &outputs !Select output and computation modules, yes ("y") or ("no") 
-inbox    = "y" !For phase matching directions, read coordinates in space, orient mus ... 
-rdm_ori  = "y" !For phase matching directions, read coordinates in space, orient mus ... 
+inbox    = "n" !For phase matching directions, read coordinates in space, orient mus ... 
+rdm_ori  = "n" !For phase matching directions, read coordinates in space, orient mus ... 
 get_sp   = "n" !recover sampling from a previous Etransitions_0.dat
 get_ei   = "y" !Generates eigenstate vectors and TDM 
 Dyn_0    = "n" !Should I perform dynamics in 0 order basis?
-Dyn_ei   = "y" !Should I perform dynamics in eigenstate basis?
+Dyn_ei   = "n" !Should I perform dynamics in eigenstate basis?
 Dyn_L    = "n" !Should I perform Liouville quantum dynamics?
 Dec_L    = "n" 
 doAbs    = "n" !Request absorption spectrum
-doFT     = "y" !Perform FT of coherences for all systems
-nofiles  = "y" !deletes all individual files
-noMat    = "y" !deletes all individual files
+doFT     = "n" !Perform FT of coherences for all systems
+nofiles  = "n" !deletes all individual files
+noMat    = "n" !deletes all individual files
 doCovar  = "n" !make covar from single FT vectors
 /
 
@@ -48,12 +48,12 @@ totaltime  = 500.d0     !Total time simulated (s)
 omega01    = 0.592d15      !Frequency (s-1)
 omega02    = 0.592d15      !Frequency (s-1)
 omega03    = 0.592d15      !Frequency (s-1)
-width01    = 6.0d0       !Width of the pulse (s) 
-width02    = 6.0d0       !Width of the pulse (s) 
-width03    = 6.0d0       !Width of the pulse (s) 
-Ed01       = 0.02d9     !Field strength (V/m so far)
-Ed02       = 0.02d9     !Field strength (V/m so far)
-Ed03       = 0.02d9     !Field strength (V/m so far)
+width01    = 3.0d0       !Width of the pulse (s) 
+width02    = 3.0d0       !Width of the pulse (s) 
+width03    = 3.0d0       !Width of the pulse (s) 
+Ed01       = 0.03d9     !Field strength (V/m so far)
+Ed02       = 0.03d9     !Field strength (V/m so far)
+Ed03       = 0.03d9     !Field strength (V/m so far)
 CEP1       = '0'       !CEP, r for random, p for pi  
 CEP2       = '0'       !CEP, r for random, p for pi
 CEP3       = '0'       !CEP, r for random, p for pi
@@ -63,7 +63,7 @@ vertex     = 8.d0     !vertex angle of beam crossing (inbox=y and 3 pulses)
 
 &syst !Parameters of the single dot
 nQDA      = 0          !Number of dimers
-nQDB      = 4000          !Number of dimers
+nQDB      = 10          !Number of dimers
 nhomoA    = 0        !Number of dimers
 nhomoB    = 0          !Number of dimers
 nhetero   = 0        !Number of dimers

@@ -91,7 +91,7 @@ implicit none
  complex(8),allocatable :: xc_ei_av(:,:), xctemp(:),xlfield(:,:),xc_L(:,:), xpow_gaus(:),xpulse(:),wft(:),wftp(:),wftf(:),xhugo(:)
  complex(8),allocatable :: wft_pol(:,:),wftf_pol(:,:), pow_pol_diff(:), wft_s(:,:), wftf_s(:,:), xpow_gaus_s(:), xpulse2(:)
  complex(8),allocatable :: k1_rho(:,:), k2_rho(:,:), k3_rho(:,:), k4_rho(:,:), k5_rho(:,:), k6_rho(:,:), k7_rho(:,:), k8_rho(:,:)
- complex(8),allocatable :: xc_rho(:,:,:), wftf_t1(:), pow_poln(:,:)
+ complex(8),allocatable :: xc_rho(:,:,:), wftf_t1(:), pow_poln(:,:), xpow_gaus2(:), xpow_pol2(:,:)
 
 contains 
 
