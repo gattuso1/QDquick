@@ -218,17 +218,19 @@ ntime     = nt
 
 !rescale polarization
 
-allocate(pow_gaus(-(nt+1):nt+1))
-allocate(pow_pol_gaus(npol,-(nt+1):nt+1))
+!allocate(pow_gaus(-(nt+1):nt+1))
+allocate(pow_gaus(0:nt+1))
+!allocate(pow_pol_gaus(npol,-(nt+1):nt+1))
+allocate(pow_pol_gaus(npol,0:nt+1))
 allocate(pow_poln(npol,-(nt+1):nt+1))
 allocate(pown(-(nt+1):nt+1))
 allocate(pulsesn(-(nt+1):nt+1))
 
 do i=0,nt-1
 pown(i)       = pow(i+nt3) 
-pown(-i)      = pown(i) 
-pulsesn(i)    = pulses(i+nt3) 
-pulsesn(-i)   = pulsesn(i)
+!pown(-i)      = pown(i) 
+!pulsesn(i)    = pulses(i+nt3) 
+!pulsesn(-i)   = pulsesn(i)
 if ( inbox .eq. 'y' ) then
 pow_poln(:,i) = pow_pol(:,i+nt3)
 endif
@@ -239,28 +241,48 @@ do t=0,ntime
 time = t*timestep
 
 pow_gaus(t)=exp(-1._dp*((time-totaltime/2._dp)*timestep)**2._dp/(2._dp*(totaltime*timestep/15._dp)**2._dp))*(pown(t)/nsys)
+!pow_gaus(t)=exp(-1._dp*((time)*timestep)**2._dp/(2._dp*(totaltime*timestep/10._dp)**2._dp)) !*(pown(t)/nsys)
+!pow_gaus(t)=(pown(t)/nsys)
 
-if ( inbox .eq. 'y' ) then
-pow_pol_gaus(39,t)=&
-   exp(-1._dp*((time-totaltime/2._dp)*timestep)**2._dp/(2._dp*(totaltime*timestep/15._dp)**2._dp))*(pow_poln(39,t)/nsys)
-pow_pol_gaus(41,t)=&
-   exp(-1._dp*((time-totaltime/2._dp)*timestep)**2._dp/(2._dp*(totaltime*timestep/15._dp)**2._dp))*(pow_poln(41,t)/nsys)
-!if ( nofiles .eq. 'n' ) then
-write(DipSpec_39_f,*) time, dreal(pow_poln(39,t)), dimag(pow_poln(39,t))
-write(DipSpec_41_f,*) time, dreal(pow_poln(41,t)), dimag(pow_poln(41,t))
+!if ( inbox .eq. 'y' ) then
+!pow_pol_gaus(39,t)=&
+!   exp(-1._dp*((time-totaltime/2._dp)*timestep)**2._dp/(2._dp*(totaltime*timestep/15._dp)**2._dp))*(pow_poln(39,t)/nsys)
+!pow_pol_gaus(41,t)=&
+!   exp(-1._dp*((time-totaltime/2._dp)*timestep)**2._dp/(2._dp*(totaltime*timestep/15._dp)**2._dp))*(pow_poln(41,t)/nsys)
+!!if ( nofiles .eq. 'n' ) then
+!write(DipSpec_39_f,*) time, dreal(pow_poln(39,t)), dimag(pow_poln(39,t))
+!write(DipSpec_41_f,*) time, dreal(pow_poln(41,t)), dimag(pow_poln(41,t))
+!!endif
 !endif
-endif
 
-pow_gaus(-t) = pow_gaus(t)
-pow_pol_gaus(:,-t) = pow_pol_gaus(:,t)
-pow_pol_gaus(:,-t) = pow_pol_gaus(:,t)
+!pow_gaus(-t) = pow_gaus(t)
+!pow_pol_gaus(:,-t) = pow_pol_gaus(:,t)
+!pow_pol_gaus(:,-t) = pow_pol_gaus(:,t)
 
 enddo 
 
-do t=-ntime,ntime
+!do t=-ntime,ntime
+do t=0,ntime+1
 time = t*timestep
-write(DipSpec,*) time, pown(t), pow_gaus(t), pulsesn(t)
+write(DipSpec,*) time, dreal(pown(t)), dimag(pown(t)), dreal(pow_gaus(t)), dimag(pow_gaus(t))!, pulsesn(t)
 enddo
+
+allocate(xpulsesn(0:nint(2._dp**FTpow)))
+
+do t=0,ntime
+xpulsesn(t)   = dcmplx(pulses(t),0._dp)
+enddo
+do t=ntime+1,nint(2.d0**FTpow)
+xpulsesn(t)  = dcmplx(0._dp,0._dp)
+enddo
+
+call fft(xpulsesn)
+
+!do t=0,ntime+1
+!time = t*timestep
+!write(6,*) time, dreal(xpulsesn(t))
+!enddo
+
 
 !if ( inbox .eq. 'y' ) then
 !
@@ -279,86 +301,73 @@ enddo
 FTscale = h/(elec*(2._dp**FTpow)*timestep)
 !gives the scale of FT vectors
 t=0
-do while ( t*FTscale .le. 4._dp )
+do while ( t*FTscale .le. 5._dp )
 t=t+1
 enddo
 nFT=t
 
 if ( doFT .eq. 'y' ) then
 
-!allocate(xpow_gaus(-nint(2._dp**FTpow):nint(2._dp**FTpow)))
 allocate(xpow_gaus(0:nint(2._dp**FTpow)))
 allocate(xpow_gaus2(-nint(2._dp**FTpow):nint(2._dp**FTpow)))
 
 do t=0,ntime
-xpow_gaus(t)   = dcmplx(pow_gaus(t)  ,0._dp)
-!xpow_gaus(-t)  = dcmplx(0._dp  ,0._dp)
-!xpulse(t)     = dcmplx(pulsesn(t),0._dp)
+xpow_gaus(t)   = pow_gaus(t)
 enddo
-
 do t=ntime+1,nint(2.d0**FTpow)
 xpow_gaus(t)  = dcmplx(0._dp,0._dp)
-!xpow_gaus(-t) = dcmplx(0._dp,0._dp)
-!xpulse(t)     = dcmplx(0._dp,0._dp)
-!xpulse(-t)    = dcmplx(0._dp,0._dp)
 enddo
 
-!call fft(xpulse)
 call fft(xpow_gaus)
 
 do t=0,nint(2.d0**FTpow)
-xpow_gaus2(-t) = dconjg(xpow_gaus(t))
 xpow_gaus2(t) = xpow_gaus(t)
+xpow_gaus2(-t) = dconjg(xpow_gaus(t))
 enddo
 
-!t=0
 t=-nFT
-do while ( t*FTscale .le. 4._dp ) 
-!wftf(t)= -2._dp * dimag(sqrt(dreal(xpow_gaus(t))**2+dimag(xpow_gaus(t))**2) * dconjg(xpulse(t)))
-!if ( nofiles .eq. 'n' ) then
-write(TransAbs,*) t*FTscale, abs(xpow_gaus2(t)), dreal(xpow_gaus2(t)), dimag(xpow_gaus2(t))
-!write(TransAbs,*) t*FTscale, dreal(wftf(t)), dreal(xpow_gaus(t)), dimag(xpow_gaus(t)), abs(xpulse(t))
-!endif
+do while ( t*FTscale .le. 5._dp ) 
+write(TransAbs,*) t*FTscale, abs(xpow_gaus2(t)), dreal(xpow_gaus2(t)), dimag(xpow_gaus2(t)), abs(xpulsesn(t))*100.d0
 t = t + 1 
 enddo
 
 !endif
 
-if ( inbox .eq. 'y' ) then
-
-allocate(xpow_pol(44,0:nint(2._dp**FTpow)))
-allocate(xpow_pol2(44,-nint(2._dp**FTpow):nint(2._dp**FTpow)))
-allocate(wftf_pol(44,0:nFT+1))
-
-do t=0,ntime
-xpow_pol(39,t)  = pow_pol_gaus(39,t)
-xpow_pol(41,t)  = pow_pol_gaus(41,t)
-enddo
-do t=ntime+1,nint(2.d0**FTpow)
-xpow_pol(39,t)  = dcmplx(0._dp,0._dp)
-xpow_pol(41,t)  = dcmplx(0._dp,0._dp)
-enddo
-
-!do pol=1,npol
-call fft(xpow_pol(39,:))
-call fft(xpow_pol(41,:))
+!if ( inbox .eq. 'y' ) then
+!
+!allocate(xpow_pol(44,0:nint(2._dp**FTpow)))
+!allocate(xpow_pol2(44,-nint(2._dp**FTpow):nint(2._dp**FTpow)))
+!allocate(wftf_pol(44,0:nFT+1))
+!
+!do t=0,ntime
+!xpow_pol(39,t)  = pow_pol_gaus(39,t)
+!xpow_pol(41,t)  = pow_pol_gaus(41,t)
 !enddo
-
-do t=0,nint(2.d0**FTpow)
-xpow_pol2(:,-t) = dconjg(xpow_pol(:,t))
-xpow_pol2(:,t) = xpow_pol(:,t)
-enddo
-
-t=-nFT
-do while ( t*FTscale .le. 4.d0 )
-write(TransAbs_39_f,*) t*FTscale, abs(xpow_pol2(39,t)), dreal(xpow_pol2(39,t)), dimag(xpow_pol2(39,t))
-write(TransAbs_41_f,*) t*FTscale, abs(xpow_pol2(41,t)), dreal(xpow_pol2(41,t)), dimag(xpow_pol2(41,t))
-t = t + 1
-enddo
-
-deallocate(xpow_pol,wftf_pol)
-
-endif
+!do t=ntime+1,nint(2.d0**FTpow)
+!xpow_pol(39,t)  = dcmplx(0._dp,0._dp)
+!xpow_pol(41,t)  = dcmplx(0._dp,0._dp)
+!enddo
+!
+!!do pol=1,npol
+!call fft(xpow_pol(39,:))
+!call fft(xpow_pol(41,:))
+!!enddo
+!
+!do t=0,nint(2.d0**FTpow)
+!xpow_pol2(:,-t) = dconjg(xpow_pol(:,t))
+!xpow_pol2(:,t) = xpow_pol(:,t)
+!enddo
+!
+!t=-nFT
+!do while ( t*FTscale .le. 4.d0 )
+!write(TransAbs_39_f,*) t*FTscale, abs(xpow_pol2(39,t)), dreal(xpow_pol2(39,t)), dimag(xpow_pol2(39,t))
+!write(TransAbs_41_f,*) t*FTscale, abs(xpow_pol2(41,t)), dreal(xpow_pol2(41,t)), dimag(xpow_pol2(41,t))
+!t = t + 1
+!enddo
+!
+!deallocate(xpow_pol,wftf_pol)
+!
+!endif
 
 !deallocate(pow,pow_gaus,xpow_gaus,xpulse,pulses,wft,wftp)
 

@@ -213,9 +213,12 @@ real(dp) function pulsex(t)
 real(dp) :: t
 
 pulsex= &
-pulse1*Pe1(1)*Ed01* cos(k_1(1)*Dcenter(1)+omega01*(t-t01)+phase01) * exp(-1._dp*((t-t01)**2._dp/(2._dp*width01**2._dp)))+&
-pulse2*Pe2(1)*Ed02* cos(k_2(1)*Dcenter(1)+omega02*(t-t02)+phase02) * exp(-1._dp*((t-t02)**2._dp/(2._dp*width02**2._dp)))+&
-pulse3*Pe3(1)*Ed03* cos(k_3(1)*Dcenter(1)+omega03*(t-t03)+phase03) * exp(-1._dp*((t-t03)**2._dp/(2._dp*width03**2._dp)))
+pulse1*Pe1(1)*Ed01*cos((l1(Pmatch)*k_1(1)*Dcenter(1))+omega01*(t-t01)+phase01) &
+                 * exp(-1._dp*((t-t01)**2._dp/(2._dp*width01**2._dp)))+&
+pulse2*Pe2(1)*Ed02*cos((l2(Pmatch)*k_2(1)*Dcenter(1))+omega02*(t-t02)+phase02) &
+                 * exp(-1._dp*((t-t02)**2._dp/(2._dp*width02**2._dp)))+&
+pulse3*Pe3(1)*Ed03*cos((l3(Pmatch)*k_3(1)*Dcenter(1))+omega03*(t-t03)+phase03) &
+                 * exp(-1._dp*((t-t03)**2._dp/(2._dp*width03**2._dp)))
 
 end function pulsex
 
@@ -223,9 +226,12 @@ real(dp) function pulsey(t)
 real(dp) :: t
 
 pulsey=&
-pulse1*Pe1(2)*Ed01* cos(k_1(2)*Dcenter(2)+omega01*(t-t01)+phase01) * exp(-1._dp*((t-t01)**2._dp/(2._dp*width01**2._dp)))+&
-pulse2*Pe2(2)*Ed02* cos(k_2(2)*Dcenter(2)+omega02*(t-t02)+phase02) * exp(-1._dp*((t-t02)**2._dp/(2._dp*width02**2._dp)))+&
-pulse3*Pe3(2)*Ed03* cos(k_3(2)*Dcenter(2)+omega03*(t-t03)+phase03) * exp(-1._dp*((t-t03)**2._dp/(2._dp*width03**2._dp)))
+pulse1*Pe1(2)*Ed01* cos((l1(Pmatch)*k_1(2)*Dcenter(2))+omega01*(t-t01)+phase01) & 
+                  * exp(-1._dp*((t-t01)**2._dp/(2._dp*width01**2._dp)))+&
+pulse2*Pe2(2)*Ed02* cos((l2(Pmatch)*k_2(2)*Dcenter(2))+omega02*(t-t02)+phase02) & 
+                  * exp(-1._dp*((t-t02)**2._dp/(2._dp*width02**2._dp)))+&
+pulse3*Pe3(2)*Ed03* cos((l3(Pmatch)*k_3(2)*Dcenter(2))+omega03*(t-t03)+phase03) & 
+                  * exp(-1._dp*((t-t03)**2._dp/(2._dp*width03**2._dp)))
 
 end function pulsey
 
@@ -233,9 +239,12 @@ real(dp) function pulsez(t)
 real(dp) :: t
 
 pulsez=&
-pulse1*Pe1(3)*Ed01* cos(k_1(3)*Dcenter(3)+omega01*(t-t01)+phase01) * exp(-1._dp*((t-t01)**2._dp/(2._dp*width01**2._dp)))+&
-pulse2*Pe2(3)*Ed02* cos(k_2(3)*Dcenter(3)+omega02*(t-t02)+phase02) * exp(-1._dp*((t-t02)**2._dp/(2._dp*width02**2._dp)))+&
-pulse3*Pe3(3)*Ed03* cos(k_3(3)*Dcenter(3)+omega03*(t-t03)+phase03) * exp(-1._dp*((t-t03)**2._dp/(2._dp*width03**2._dp)))
+pulse1*Pe1(3)*Ed01* cos((l1(Pmatch)*k_1(3)*Dcenter(3))+omega01*(t-t01)+phase01) & 
+                  * exp(-1._dp*((t-t01)**2._dp/(2._dp*width01**2._dp)))+&
+pulse2*Pe2(3)*Ed02* cos((l2(Pmatch)*k_2(3)*Dcenter(3))+omega02*(t-t02)+phase02) & 
+                  * exp(-1._dp*((t-t02)**2._dp/(2._dp*width02**2._dp)))+&
+pulse3*Pe3(3)*Ed03* cos((l3(Pmatch)*k_3(3)*Dcenter(3))+omega03*(t-t03)+phase03) & 
+                  * exp(-1._dp*((t-t03)**2._dp/(2._dp*width03**2._dp)))
 
 end function pulsez
 
@@ -686,17 +695,17 @@ enddo
 
 pow(t) = pow(t) + powtemp(t)
 
-if ( inbox .eq. 'y' ) then
+!if ( inbox .eq. 'y' ) then
 !do pol=1,npol
 !pow_pol(pol,t) = pow_pol(pol,t) + dcmplx(pow_s(n,t),0.d0)*&
 !   exp(-im*(1._dp/545.e-9_dp)*dcmplx(dot_product(l1(pol)*Pe1(:)+l2(pol)*Pe2(:)+l3(pol)*Pe3(:),Dcenter(n,:)),0.e0_dp))
 !enddo
 
-pow_pol(39,t) = pow_pol(39,t) + dcmplx(powtemp(t),0._dp)*&
-   exp(-im*dcmplx(dot_product(l1(39)*k_1(:)+l2(39)*k_2(:)+l3(39)*k_3(:),Dcenter(:)),0._dp))
+!pow_pol(39,t) = pow_pol(39,t) + dcmplx(powtemp(t),0._dp)*&
+!   exp(-im*dcmplx(dot_product(l1(39)*k_1(:)+l2(39)*k_2(:)+l3(39)*k_3(:),Dcenter(:)),0._dp))
 
-pow_pol(41,t) = pow_pol(41,t) + dcmplx(powtemp(t),0._dp)*&
-   exp(-im*dcmplx(dot_product(l1(41)*k_1(:)+l2(41)*k_2(:)+l3(41)*k_3(:),Dcenter(:)),0._dp))
+!pow_pol(41,t) = pow_pol(41,t) + dcmplx(powtemp(t),0._dp)*&
+!   exp(-im*dcmplx(dot_product(l1(41)*k_1(:)+l2(41)*k_2(:)+l3(41)*k_3(:),Dcenter(:)),0._dp))
 
 !pow_pol(43,t) = pow_pol(43,t) + dcmplx(pow_s(n,t),0._dp)*&
 !   exp(-im*(1._dp/545.e-9_dp)*dcmplx(dot_product(l1(43)*Pe1(:)+l2(43)*Pe2(:)+l3(43)*Pe3(:),Dcenter(n,:)),0._dp))
@@ -704,7 +713,7 @@ pow_pol(41,t) = pow_pol(41,t) + dcmplx(powtemp(t),0._dp)*&
 !pow_pol(44,t) = pow_pol(44,t) + dcmplx(pow_s(n,t),0._dp)*&
 !   exp(-im*(1._dp/545.e-9_dp)*dcmplx(dot_product(l1(44)*Pe1(:)+l2(44)*Pe2(:)+l3(44)*Pe3(:),Dcenter(n,:)),0._dp))
 
-endif
+!endif
 
 enddo
 

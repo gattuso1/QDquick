@@ -968,6 +968,7 @@ Ham_0(2)     = minEeA(1) + minEhA(2) + V0
 Ham_dir(2,2) = elec*(a22_1d_ho + a22_2d_ho / ((aRA*1e9_dp)**a22_3d_ho))
 Ham_ex(2,2)  = elec*(a22_1e_ho + a22_2e_ho / ((aRA*1e9_dp)**a22_3e_ho))
 
+if ( n .gt. nQDA+nQDB ) then
 Ham_0(3)     = minEeB(1) + minEhB(1)  + V0
 Ham_dir(3,3) = elec*(a11_1d_ho + a11_2d_ho / ((aRB*1e9_dp)**a11_3d_ho))
 Ham_ex(3,3)  = elec*(a11_1e_ho + a11_2e_ho / ((aRB*1e9_dp)**a11_3e_ho))
@@ -975,10 +976,12 @@ Ham_ex(3,3)  = elec*(a11_1e_ho + a11_2e_ho / ((aRB*1e9_dp)**a11_3e_ho))
 Ham_0(4)     = minEeB(1) + minEhB(2) + V0
 Ham_dir(4,4) = elec*(a22_1d_ho + a22_2d_ho / ((aRB*1e9_dp)**a22_3d_ho))
 Ham_ex(4,4)  = elec*(a22_1e_ho + a22_2e_ho / ((aRB*1e9_dp)**a22_3e_ho))
+endif
 
 Ham_dir(1,2) = elec*(a12_1d_ho + a12_2d_ho / ((aRA*1e9_dp)**a12_3d_ho))
 Ham_ex(1,2)  = elec*(a12_1e_ho + a12_2e_ho / ((aRA*1e9_dp)**a12_3e_ho))
 
+if ( n .gt. nQDA+nQDB ) then
 Ham_dir(3,4) = elec*(a12_1d_ho + a12_2d_ho / ((aRB*1e9_dp)**a12_3d_ho))
 Ham_ex(3,4)  = elec*(a12_1e_ho + a12_2e_ho / ((aRB*1e9_dp)**a12_3e_ho))
 
@@ -993,21 +996,32 @@ Ham_ex(2,3)  = elec*(a14_1e_he + a14_2e_he / ((aRB*1e9_dp)**a14_3e_he * (aRA*1e9
 
 Ham_dir(2,4) = elec*(a24_1d_he + a24_2d_he / ((aRA*1e9_dp)**a24_3d_he * (aRB*1e9_dp)**a24_4d_he))
 Ham_ex(2,4)  = elec*(a24_1e_he + a24_2e_he / ((aRA*1e9_dp)**a24_3e_he * (aRB*1e9_dp)**a24_4e_he))
+endif
 
 Eg(1) = Ham_0(1) 
 Eg(2) = Ham_0(2) 
+if ( n .gt. nQDA+nQDB ) then
 Eg(3) = Ham_0(3)
 Eg(4) = Ham_0(4)
+endif
 
 TDM(1) = TransDip_Ana_h1eA
 TDM(2) = TransDip_Ana_h2eA
+if ( n .gt. nQDA+nQDB ) then
 TDM(3) = TransDip_Ana_h1eB
 TDM(4) = TransDip_Ana_h2eB
+endif
+
+if ( n .le. nQDA+nQDB ) then
+nbands = 2
+elseif ( n .gt. nQDA+nQDB ) then
+nbands = 4 
+endif
 
 j=0
 k=1
 
-do while ( k .le. 4 ) 
+do while ( k .le. nbands ) 
 
 Ham(j+1 ,j+1 ) = Eg(k) + Ham_ex(k,k)  - elec* Dso1/3.d0 
 Ham(j+2 ,j+2 ) = Eg(k) + Ham_ex(k,k)  - elec* Dso1/3.d0 
@@ -1070,6 +1084,7 @@ TransHam(10,22) = abs(TransDip_Ana_h1h2A)
 TransHam(11,23) = abs(TransDip_Ana_h1h2A)
 TransHam(12,24) = abs(TransDip_Ana_h1h2A)
 
+if ( n .gt. nQDA+nQDB ) then
 !H12B
 Ham(25,37) = Ham_ex(3,4)
 Ham(26,38) = Ham_ex(3,4)
@@ -1096,6 +1111,7 @@ TransHam(33,45) = abs(TransDip_Ana_h1h2B)
 TransHam(34,46) = abs(TransDip_Ana_h1h2B)
 TransHam(35,47) = abs(TransDip_Ana_h1h2B)
 TransHam(36,48) = abs(TransDip_Ana_h1h2B)
+endif
 
 if ( Von .eq. 'y' ) then 
 

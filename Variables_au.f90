@@ -28,7 +28,7 @@ implicit none
    integer :: Tmat_avg_f, Tmat_avgx_f, Tmat_avgy_f, Tmat_avgz_f, Etr_avg_f, popc_avg_f, Re_c_avg_f, Im_c_avg_f, TransAbs_avg
    integer :: DipSpec_avg, P_Match_avg, TransAbs_avg_7_f, TransAbs_avg_17_f, TransAbs_avg_33_f, TransAbs_avg_39_f, TransAbs_avg_41_f
    integer :: TransAbs_avg_43_f, TransAbs_avg_44_f, DipSpec_avg_7_f, DipSpec_avg_17_f, DipSpec_avg_33_f, DipSpec_avg_39_f
-   integer :: DipSpec_avg_41_f, DipSpec_avg_43_f, DipSpec_avg_44_f, error, label_0, sigfit, Dmat, rhofit, nt, nt3
+   integer :: DipSpec_avg_41_f, DipSpec_avg_43_f, DipSpec_avg_44_f, error, label_0, sigfit, Dmat, rhofit, nt, nt3, Pmatch
    integer,allocatable :: seed(:),icol(:,:),irow(:,:),iwork2(:),zero(:), values(:)
    real(dp) :: a13_1d_he,a13_2d_he,a13_3d_he,a13_4d_he,a15_1d_he,a15_2d_he,a15_3d_he,a15_4d_he,a17_1d_he,a17_2d_he,a17_3d_he,&
                a17_4d_he,a24_1d_he,a24_2d_he,a24_3d_he,a24_4d_he,a26_1d_he,a26_2d_he,a26_3d_he,a26_4d_he,a28_1d_he,a28_2d_he,&
@@ -72,14 +72,14 @@ implicit none
    real(dp),allocatable :: OverlapAna_h1e(:), OverlapAna_h2e(:), Cb_Num_eh1(:), Cb_Num_eh1_eh2(:), Cb_Num_eh2(:)
    real(dp),allocatable :: TransDip_Num_h1e(:), TransDip_Num_h2e(:), work(:), lambda(:)
    real(dp),allocatable :: minEe(:,:),minEh(:,:), minEeA(:),minEeB(:)
-   real(dp),allocatable :: minEhA(:),minEhB(:), pown(:), pulsesn(:)
+   real(dp),allocatable :: minEhA(:),minEhB(:), pulsesn(:)
    real(dp),allocatable :: TransDip_Ana_h1e(:), TransDip_Ana_h2e(:), Oscillator_Ana_h1e(:), Oscillator_Ana_h2e(:), Transvec(:)
    real(dp),allocatable :: ExctCoef_h1e(:), ExctCoef_h2e(:), Ham(:,:), E0(:), c0(:), TransHam(:,:), Hamt(:,:,:), c(:,:)
    real(dp),allocatable :: TransMat_ei(:,:), TransHam0(:,:), Ham_0(:), Ham_dir(:,:), Ham_ex(:,:), Ham_ei(:,:), Ham_l(:,:), haml(:,:)
    real(dp),allocatable :: TransDip_Ana_h1h2(:), TransHam_ei(:,:), Mat(:,:), QDcoor(:), Dcenter(:), Pe1(:), Pe2(:), Pe3(:)
    real(dp),allocatable :: TransHam_d(:,:,:), TransHam_l(:,:,:), TransHam_ei_l(:,:,:), k_1(:), k_2(:), k_3(:), work1(:), work2(:)
-   real(dp),allocatable :: Matx(:,:), Maty(:,:), Matz(:,:),spec(:),dipole(:,:), Ham0_avg(:,:), sigD(:,:), sigDiag(:), powtemp(:)
-   real(dp),allocatable :: pow(:),pow_gaus(:),pulses(:), pow_s(:,:), pow_gaus_s(:,:), pulses_FFT(:)
+   real(dp),allocatable :: Matx(:,:), Maty(:,:), Matz(:,:),spec(:),dipole(:,:), Ham0_avg(:,:), sigD(:,:), sigDiag(:)
+   real(dp),allocatable :: pulses(:), pow_s(:,:), pow_gaus_s(:,:), pulses_FFT(:)
    real(dp),allocatable :: Scov(:,:), pop(:,:),merge_diag(:,:),merge_odiag(:,:), scos(:), ssin(:), lfield(:,:), rho(:,:)
    real(dp),allocatable :: TransHam_avg(:,:),TransHam_avg_l(:,:,:),lambda_avg(:), bloblo(:), blabla(:),maxid(:), rotmat(:,:)
  complex(8) :: ct1, ct2, ct3, ct4, xt01, xt02, xt03, xhbar, im, xwidth, xomega , xEd, xh, xphase, xtime, xhbar_au
@@ -89,9 +89,10 @@ implicit none
  complex(8),allocatable :: k1_L(:), k2_L(:), k3_L(:) , k4_L(:),  k5_L(:), k6_L(:), k7_L(:) , k8_L(:), xpow_pol(:,:),xliou(:,:,:,:)
  complex(8),allocatable :: dk1(:), dk2(:), dk3(:) , dk4(:), k5(:), k6(:), k7(:) , k8(:), pow_pol(:,:), pow_pol_gaus(:,:)
  complex(8),allocatable :: xc_ei_av(:,:), xctemp(:),xlfield(:,:),xc_L(:,:), xpow_gaus(:),xpulse(:),wft(:),wftp(:),wftf(:),xhugo(:)
+ complex(8),allocatable :: pow_gaus(:), xpow_gaup(:), xpulsesn(:)
  complex(8),allocatable :: wft_pol(:,:),wftf_pol(:,:), pow_pol_diff(:), wft_s(:,:), wftf_s(:,:), xpow_gaus_s(:), xpulse2(:)
  complex(8),allocatable :: k1_rho(:,:), k2_rho(:,:), k3_rho(:,:), k4_rho(:,:), k5_rho(:,:), k6_rho(:,:), k7_rho(:,:), k8_rho(:,:)
- complex(8),allocatable :: xc_rho(:,:,:), wftf_t1(:), pow_poln(:,:), xpow_gaus2(:), xpow_pol2(:,:)
+ complex(8),allocatable :: xc_rho(:,:,:), wftf_t1(:), pow_poln(:,:), xpow_gaus2(:), xpow_pol2(:,:), powtemp(:),pow(:),pown(:)
 
 contains 
 
@@ -102,7 +103,7 @@ NAMELIST /outputs/   inbox,rdm_ori,random,get_sp,get_ei,Dyn_0,Dyn_ei,Dyn_L,Dec_L
 NAMELIST /elecSt/    model,Von,me,mh,eps,epsout,V0eV,omegaLO,slope,side
 NAMELIST /fineStruc/ Kas,Kbs,Kcs,Kpp,Dso1,Dso2,Dxf
 NAMELIST /pulses/    integ,npulses,t01,t02,t03,timestep,totaltime,omega01,omega02,omega03,phase01,phase02,phase03,&
-                     width01,width02,width03,Ed01,Ed02,Ed03,CEP1,CEP2,CEP3,pgeom,vertex
+                     width01,width02,width03,Ed01,Ed02,Ed03,CEP1,CEP2,CEP3,pgeom,vertex,Pmatch
 NAMELIST /syst/      nQDA,nQDB,nhomoA,nhomoB,nhetero,dispQD,idlink,aA,aB     
 NAMELIST /FT/        FTpow
 
@@ -264,15 +265,6 @@ nQD    = nQDA+nQDB
 ndim   = nhomoA+nhomoB+nhetero
 nsys   = nQDA+nQDB+nhomoA+nhomoB+nhetero     
 totsys = nsys+nhomoA+nhomoB+nhetero
-
-!if ( inbox .eq. 'y' ) then
-!open(newunit=sphere,file='sphere.xyz')
-!write(sphere,*) nint(totsys/2._dp) 
-!write(sphere,*) 
-!Dcenter(:) = vectorin(1.e16_dp) 
-!Dcenter(:) = (Dcenter(:) + 1e16_dp**(1._dp/3._dp)) * 1.e-9_dp
-!write(sphere,*) 'H', Dcenter(1), Dcenter(2), Dcenter(3) 
-!endif
 
 end subroutine getVariables
    
