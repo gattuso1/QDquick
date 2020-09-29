@@ -157,7 +157,6 @@ enddo
 
 endif
 
-
 !! file writing
 write(form_mat,'("(",i0,"ES16.5E2)")') nstates
 write(form_TDM,'("(",i0,"f16.8)")') nstates
@@ -173,21 +172,16 @@ write(form_com_L,'("(ES12.5E3,",i0,"ES18.8E3,ES28.15)")') nstates2+1
 write(form_pop_L,'("(ES12.5E3,",i0,"ES18.8E3,f28.15)")') nstates
 write(form_DipSpec,'("(ES12.5E3,",i0,"ES18.8E3)")') nstates+2
 
-if ( noMat .eq. "n" ) then
-do i=1,size(matrices)
+if ( noTDM .eq. "n" ) then
+do i=1,size(matTDM)
 if (n .le. nQDA+nQDB) then
-write(matrices(i),'(i0,f16.8)') n , aRA*1.d9
+write(matTDM(i),'(i0,f16.8)') n , aRA*1.d9
 elseif (n .gt. nQDA+nQDB) then
-write(matrices(i),'(i0,2f16.8)') n , aRA*1.d9, aRB*1.d9
+write(matTDM(i),'(i0,2f16.8)') n , aRA*1.d9, aRB*1.d9
 endif
 enddo
 do i=0,nstates-1
-write(H_0_f    ,form_mat) (Ham(i,j)*Energ_au/elec, j=0,nstates-1)
-write(H_dir_f  ,form_mat) (Ham_dir(i,j)*Energ_au/elec, j=0,nstates-1)
-write(H_ex_f   ,form_mat) (Ham_ex(i,j)*Energ_au/elec, j=0,nstates-1)
-write(H_JK_f   ,form_mat) ((-1.d0*Ham_dir(i,j) + Ham_ex(i,j))*Energ_au/elec, j=0,nstates-1)
 write(Tmat_0_f ,form_TDM) (TransHam(i,j), j=0,nstates-1)
-write(H_ei_f   ,form_mat) (Ham_ei(i,j), j=0,nstates-1)
 write(Tmat_ei_f,form_TDM) (TransHam_ei(i,j), j=0,nstates-1)
 if ( inbox .eq. "y" ) then
 write(Tmat_x_f,form_TDM) (TransHam_ei_l(i,j,1), j=0,nstates-1)
@@ -195,8 +189,25 @@ write(Tmat_y_f,form_TDM) (TransHam_ei_l(i,j,2), j=0,nstates-1)
 write(Tmat_z_f,form_TDM) (TransHam_ei_l(i,j,3), j=0,nstates-1)
 endif
 enddo
-do i=1,size(matrices)
-write(matrices(i),*)
+do i=1,size(matTDM)
+write(matTDM(i),*)
+enddo
+endif
+
+if ( noCb .eq. "n" ) then
+do i=1,size(matCb)
+if (n .le. nQDA+nQDB) then
+write(matCb(i),'(i0,f16.8)') n , aRA*1.d9
+elseif (n .gt. nQDA+nQDB) then
+write(matCb(i),'(i0,2f16.8)') n , aRA*1.d9, aRB*1.d9
+endif
+enddo
+do i=0,nstates-1
+write(H_0_f    ,form_mat) (Ham(i,j)*Energ_au/elec, j=0,nstates-1)
+write(H_ei_f   ,form_mat) (Ham_ei(i,j), j=0,nstates-1)
+enddo
+do i=1,size(matCb)
+write(matCb(i),*)
 enddo
 endif
 

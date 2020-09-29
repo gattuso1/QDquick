@@ -1,23 +1,24 @@
 &outputs !Activate computation modules
-inbox    = "y" !For phase matching directions
-rdm_ori  = "y" !For phase matching directions
+inbox    = "n" !For phase matching directions
+rdm_ori  = "n" !For phase matching directions
 random   = "y" !same seed "y" to get always the same random numbers, random ensemble "n"
 get_sp   = "n" !recover sampling from a previous Etransitions_0.dat (UNUSED)
 get_ei   = "y" !Generates eigenstate vectors and TDM (diagonalization)
 Dyn_0    = "n" !Should I perform dynamics in 0 order basis?
-Dyn_ei   = "y" !Should I perform dynamics in eigenstate basis?
+Dyn_ei   = "n" !Should I perform dynamics in eigenstate basis?
 Dyn_L    = "n" !Should I perform Liouville quantum dynamics?
 Dec_L    = "n" !(UNUSED)
-doAbs    = "n" !Request absorption spectrum convoluted
+doAbs    = "y" !Request absorption spectrum convoluted (UNUSED)
 doFT     = "y" !Perform FT of coherences for the ensemble
-nofiles  = "n" !deletes all individual files (real/imaginary parts of coheficients + pop)
-noMat    = "n" !deletes all individual files (matrices)
+nofiles  = "y" !deletes all individual files (TDM)
+noTDM    = "y" !deletes all individual files (TDM)
+noCb     = "y" !deletes all individual files (Cb)
 doCovar  = "n" !make covar from single FT vectors (UNUSED)
 /
 
 &elecSt !Parameters of CdSe QD and electronic structure model
-model     =  "FO"         !Single band: "SB", Forster: "FO", fine structure "FS"
-Von       =  "n"          !"y" for interdot coupling on (Von), "n" for interdot coupling off (Voff)
+model     =  "FS"         !Single band: "SB", Forster: "FO", fine structure "FS"
+Von       =  "y"          !"y" for interdot coupling on (Von), "n" for interdot coupling off (Voff)
 me        =  0.13d0       !Effective mass of particles in electron states (*m0)
 mh        =  0.82d0       !Effective mass of particles in hole states (*m0)
 eps       =  9.56d0       !Bulk dielectric constant (UNUSED)
@@ -29,29 +30,29 @@ side      =  0.5d-9       !Width of side buffer of integration box (UNUSED)
 / 
 
 &fineStruc !Parameters of fine structure
-Kas  = 0.012d0   !fine structure spliting for s-p orbitals (eV)
-Kbs  = 0.012d0   !fine structure spliting for s-p orbitals (eV) 
-Kcs  = 0.012d0   !fine structure spliting for s-p orbitals (eV)
-Kpp  = 0.0d0     !fine structure spliting for p-p orbitals (eV)
+Kas  = 0.012d0   !fine structure spliting for s-p orbitals (eV) (UNUSED)
+Kbs  = 0.012d0   !fine structure spliting for s-p orbitals (eV) (UNUSED)
+Kcs  = 0.012d0   !fine structure spliting for s-p orbitals (eV) (UNUSED)
+Kpp  = 0.0d0     !fine structure spliting for p-p orbitals (eV) (UNUSED)
 Dso1 = 0.220d0   !spin-orbit 1S band (eV)
 Dso2 = 0.220d0   !spin-orbit 2S band (eV)
 Dxf  = 0.025d0   !crystal field spliting (eV)
 /
 
 &pulses !Parameters of quantum dynamics and pulses
-integ      = "RK6"      !Choose between integrator RK4 or RK6 (obsolete)
+integ      = "RK6"      !Choose between integrator RK4 or RK6 (UNUSED)
 npulses    = 3          !Number of pulses (up to 3)
 t01        = 50.d0      !Pulse 1 centered at (fs)
 t02        = 150.d0     !Pulse 2 centered at (fs)
 t03        = 250.d0     !Pulse 3 centered at (fs)
-timestep   = 0.01d0     !Time step of integration
-totaltime  = 500.d0     !Total time of simulation after 3rd pulse (fs)
-omega01    = 0.400d15   !Frequency (s-1)
-omega02    = 0.400d15   !Frequency (s-1)
-omega03    = 0.400d15   !Frequency (s-1)
+timestep   = 0.01d0     !Time step of integration (fs)
+totaltime  = 100.d0     !Total time of simulation after 3rd pulse (fs)
+omega01    = 0.592d15   !Frequency (s-1)
+omega02    = 0.592d15   !Frequency (s-1)
+omega03    = 0.592d15   !Frequency (s-1)
 width01    = 8.0d0      !Width of the pulse (fs) 
-width02    = 8.0d0      !Width of the pulse (fs) 
-width03    = 8.0d0      !Width of the pulse (fs) 
+width02    = 3.0d0      !Width of the pulse (fs) 
+width03    = 3.0d0      !Width of the pulse (fs) 
 Ed01       = 0.03d9     !Field strength (V/m)
 Ed02       = 0.03d9     !Field strength (V/m)
 Ed03       = 0.03d9     !Field strength (V/m)
@@ -59,20 +60,20 @@ CEP1       = '0'        !CEP, 'r' for random, 'p' for pi, '0' for 0
 CEP2       = '0'        !CEP, 'r' for random, 'p' for pi, '0' for 0
 CEP3       = '0'        !CEP, 'r' for random, 'p' for pi, '0' for 0
 pgeom      = "boxcar"   !boxcar / triang / straig
-vertex     = 4.d0       !vertex angle of beam crossing
+vertex     = 4.d0       !vertex angle of beam crossing (degrees)
 Pmatch     = 39         !(UNUSED)
 /
 
 &syst !Parameters of the ensemble
 nQDA      = 0          !Number of monomers A
 nQDB      = 0          !Number of monomers B
-nhomoA    = 0          !Number of homodimers A
+nhomoA    = 0       !Number of homodimers A
 nhomoB    = 0          !Number of homodimers B
-nhetero   = 10         !Number of heterodimers A-B
+nhetero   = 100          !Number of heterodimers A-B
 dispQD    = 0.05d0     !Size dispersion of QD radii
 idlink    = 55         !Linker length (either 20 for 0.2 nm or 55 for 0.55 nm)
 aA        = 1.2d-9     !Radius of QDA (nm)
-aB        = 2.0d-9     !Radius of QDB (nm)
+aB        = 1.2d-9     !Radius of QDB (nm)
 /
 
 &FT !Parameters of FT

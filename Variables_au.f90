@@ -12,10 +12,11 @@ implicit none
    character*64 :: popc, hmti, norm, tdmM, hmt0, outputdir, norm_ei, popc_ei, Re_c_ei, Im_c_ei, integ,model, line, dummy
    character*64 :: Re_c, Im_c, syst_n, Re_c_l, Im_c_L, cov, cov2, Pop_c_L
    character*1  :: o_Norm, o_Over, o_Coul, o_DipS, o_Osci, o_Exti, o_DipD, dyn, hamilt, get_ei, finest, get_sp
-   character*1  :: Dyn_0, Dyn_ei, inbox, Dyn_L,doFT,CEP1,CEP2,CEP3,nofiles, doCovar,doAbs
-   character*1  :: rdm_ori, noMat, Dec_L, Von, random
+   character*1  :: Dyn_0, Dyn_ei, inbox, Dyn_L,doFT,CEP1,CEP2,CEP3,nofiles, doCovar,doAbs, noTDM, noCb
+   character*1  :: rdm_ori, Dec_L, Von, random
    logical :: isit
-   integer,dimension(10) :: matrices
+   integer,dimension(5) :: matTDM
+   integer,dimension(2) :: matCb
    integer :: Pulse_f,Tmat_0_f,Tmat_ei_f,Tmat_x_f,Tmat_y_f,Tmat_z_f,H_0_f,H_dir_f,H_ex_f,H_JK_f,TransAbs, DipSpec_conv_f
    integer :: popc_0_f,popc_ei_f,norm_0_f,norm_ei_f,Re_c_ei_f,Im_c_ei_f,Re_c_0_f,Im_c_0_f,TDip_ei_f,tmp, nbands,Liou_f, getMat
    integer :: Re_c_L_f,Im_c_L_f,H_ei_f,Etr_0_f,Etr_ei_f,Abs_imp_f, t2, DipSpec, pol, npol, P_Match_f, DipSpec_R_f,DipSpec_NR_f
@@ -79,7 +80,7 @@ implicit none
    real(dp),allocatable :: TransDip_Ana_h1h2(:), TransHam_ei(:,:), Mat(:,:), QDcoor(:), Dcenter(:), Pe1(:), Pe2(:), Pe3(:)
    real(dp),allocatable :: TransHam_d(:,:,:), TransHam_l(:,:,:), TransHam_ei_l(:,:,:), k_1(:), k_2(:), k_3(:), work1(:), work2(:)
    real(dp),allocatable :: Matx(:,:), Maty(:,:), Matz(:,:),spec(:),dipole(:,:), Ham0_avg(:,:), sigD(:,:), sigDiag(:)
-   real(dp),allocatable :: pulses(:), pow_s(:,:), pow_gaus_s(:,:), pulses_FFT(:)
+   real(dp),allocatable :: pulses(:), pow_s(:,:), pow_gaus_s(:,:), pulses_FFT(:), powtemp(:)
    real(dp),allocatable :: Scov(:,:), pop(:,:),merge_diag(:,:),merge_odiag(:,:), scos(:), ssin(:), lfield(:,:), rho(:,:)
    real(dp),allocatable :: TransHam_avg(:,:),TransHam_avg_l(:,:,:),lambda_avg(:), bloblo(:), blabla(:),maxid(:), rotmat(:,:)
  complex(8) :: ct1, ct2, ct3, ct4, xt01, xt02, xt03, xhbar, im, xwidth, xomega , xEd, xh, xphase, xtime, xhbar_au
@@ -92,14 +93,14 @@ implicit none
  complex(8),allocatable :: pow_gaus(:), xpow_gaup(:), xpulsesn(:)
  complex(8),allocatable :: wft_pol(:,:),wftf_pol(:,:), pow_pol_diff(:), wft_s(:,:), wftf_s(:,:), xpow_gaus_s(:), xpulse2(:)
  complex(8),allocatable :: k1_rho(:,:), k2_rho(:,:), k3_rho(:,:), k4_rho(:,:), k5_rho(:,:), k6_rho(:,:), k7_rho(:,:), k8_rho(:,:)
- complex(8),allocatable :: xc_rho(:,:,:), wftf_t1(:), pow_poln(:,:), xpow_gaus2(:), xpow_pol2(:,:), powtemp(:),pow(:),pown(:)
+ complex(8),allocatable :: xc_rho(:,:,:), wftf_t1(:), pow_poln(:,:), xpow_gaus2(:), xpow_pol2(:,:), pow(:),pown(:)
 
 contains 
 
 subroutine getVariables
 
 NAMELIST /outputs/   inbox,rdm_ori,random,get_sp,get_ei,Dyn_0,Dyn_ei,Dyn_L,Dec_L,&
-                     doAbs,doFT,nofiles,noMat,doCovar
+                     doAbs,doFT,nofiles,noTDM,noCb,doCovar
 NAMELIST /elecSt/    model,Von,me,mh,eps,epsout,V0eV,omegaLO,slope,side
 NAMELIST /fineStruc/ Kas,Kbs,Kcs,Kpp,Dso1,Dso2,Dxf
 NAMELIST /pulses/    integ,npulses,t01,t02,t03,timestep,totaltime,omega01,omega02,omega03,phase01,phase02,phase03,&
