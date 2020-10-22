@@ -108,7 +108,12 @@ if ( inbox .eq. 'y' ) then
 Dcenter(:) = vectorin((2._dp*t_au*2._dp*pi*cl/min(omega01,omega02,omega03))**3._dp)
 endif
 
-nstates=55 ; nstates2=nstates**2
+if ( Biex .eq. 'n' ) then
+nstates=25 ; nstates2= nstates**2
+elseif ( Biex .eq. 'y' ) then
+nstates=70 ; nstates2= nstates**2
+endif
+
 print*, "Computing system number:    ", n, "which possesses", nstates, "states"
 include 'allocate_core.f90'
 call make_Ham_FS_FO
@@ -166,8 +171,12 @@ if ( inbox .eq. 'y' ) then
 Dcenter(:) = vectorin((2._dp*t_au*2._dp*pi*cl/min(omega01,omega02,omega03))**3._dp)
 endif
 
-!nstates=109 ; nstates2=nstates**2
-nstates=49 ; nstates2=nstates**2
+if ( Biex .eq. 'n' ) then
+nstates=49 ; nstates2= nstates**2
+elseif ( Biex .eq. 'y' ) then
+nstates=205 ; nstates2= nstates**2
+endif
+
 print*, "Computing system number:    ", n, "which possesses", nstates, "states"
 include 'allocate_core.f90'
 call make_Ham_FS_FO

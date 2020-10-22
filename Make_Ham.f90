@@ -1057,6 +1057,99 @@ k = k + 1
 
 enddo
 
+if ( Biex .eq. 'y' ) then
+
+do k = 1,nbands
+   do l = k,nbands
+
+!Ham(j+1 ,j+1 ) = 2*Eg(k)  - elec*(2._dp*Kbs + 2._dp*Kcs)
+!Ham(j+2 ,j+2 ) = 2*Eg(k)  - elec*(Kas + Kbs + 2._dp*Kcs - Dxf + Dso1/3._dp + Kpp)
+!Ham(j+3 ,j+3 ) = 2*Eg(k)  - elec*(2._dp*Kas + Kbs + Kcs - Dxf + Dso1/3._dp + Kpp)
+!Ham(j+4 ,j+4 ) = 2*Eg(k)  - elec*(2._dp*Kas + 2._dp*Kbs)
+!Ham(j+5 ,j+5 ) = 2*Eg(k)  - elec*(Kas + Kbs + 2._dp*Kcs - Dxf - Kpp)
+!Ham(j+6 ,j+6 ) = 2*Eg(k)  - elec*(Kas + Kbs + 2._dp*Kcs - Dxf + Kpp)
+!Ham(j+7 ,j+7 ) = 2*Eg(k)  - elec*(Kas + 2._dp*Kbs + Kcs + Kpp)
+!Ham(j+8 ,j+8 ) = 2*Eg(k)  - elec*(Kas + 2._dp*Kbs + Kcs + Kpp)
+!Ham(j+9 ,j+9 ) = 2*Eg(k)  - elec*(2._dp*Kas + Kbs + Kcs - Dxf - Kpp)
+!Ham(j+10,j+10) = 2*Eg(k)  - elec*(2._dp*Kas + Kbs + Kcs - Dxf + Kpp)
+!Ham(j+11,j+11) = 2*Eg(k)  - elec*(Kas + Kbs + 2._dp*Kcs - Dxf - Dso1/3._dp + Kpp)
+!Ham(j+12,j+12) = 2*Eg(k)  - elec*(2._dp*Kas + 2._dp*Kcs - 2._dp*Dxf)
+!Ham(j+13,j+13) = 2*Eg(k)  - elec*(Kas + 2._dp*Kbs + Kcs - Kpp)
+!Ham(j+14,j+14) = 2*Eg(k)  - elec*(Kas + 2._dp*Kbs + Kcs + Kpp)
+!Ham(j+15,j+15) = 2*Eg(k)  - elec*(2._dp*Kas + Kbs + Kcs - Dxf - Dso1/3._dp + Kpp)
+Ham(j+1 ,j+1 ) = Eg(k) + Eg(l) + 4.d0 * ( - Ham_dir(k,l) + Ham_ex(k,l) )  
+Ham(j+2 ,j+2 ) = Eg(k) + Eg(l) + 4.d0 * (   Ham_ex(k,l)                ) - elec*(- Dxf + Dso1/3._dp + Kpp)
+Ham(j+3 ,j+3 ) = Eg(k) + Eg(l) + 4.d0 * (   Ham_ex(k,l)                ) - elec*(- Dxf + Dso1/3._dp + Kpp)
+Ham(j+4 ,j+4 ) = Eg(k) + Eg(l) + 4.d0 * ( - Ham_dir(k,l) + Ham_ex(k,l) ) 
+Ham(j+5 ,j+5 ) = Eg(k) + Eg(l) + 4.d0 * ( - Ham_dir(k,l) + Ham_ex(k,l) ) - elec*(- Dxf - Kpp)
+Ham(j+6 ,j+6 ) = Eg(k) + Eg(l) + 4.d0 * (   Ham_ex(k,l)                ) - elec*(- Dxf + Kpp)
+Ham(j+7 ,j+7 ) = Eg(k) + Eg(l) + 4.d0 * (   Ham_ex(k,l)                ) - elec* Kpp
+Ham(j+8 ,j+8 ) = Eg(k) + Eg(l) + 4.d0 * (   Ham_ex(k,l)                ) - elec* Kpp
+Ham(j+9 ,j+9 ) = Eg(k) + Eg(l) + 4.d0 * ( - Ham_dir(k,l) + Ham_ex(k,l) ) - elec*( - Dxf - Kpp)
+Ham(j+10,j+10) = Eg(k) + Eg(l) + 4.d0 * (   Ham_ex(k,l)                ) - elec*( - Dxf + Kpp)
+Ham(j+11,j+11) = Eg(k) + Eg(l) + 4.d0 * (   Ham_ex(k,l)                ) - elec*( - Dxf - Dso1/3._dp + Kpp)
+Ham(j+12,j+12) = Eg(k) + Eg(l) + 4.d0 * ( - Ham_dir(k,l) + Ham_ex(k,l) ) - elec*( - 2._dp*Dxf)
+Ham(j+13,j+13) = Eg(k) + Eg(l) + 4.d0 * ( - Ham_dir(k,l) + Ham_ex(k,l) ) - elec*( - Kpp)
+Ham(j+14,j+14) = Eg(k) + Eg(l) + 4.d0 * (   Ham_ex(k,l)                ) - elec*(   Kpp)
+Ham(j+15,j+15) = Eg(k) + Eg(l) + 4.d0 * (   Ham_ex(k,l)                ) - elec*( - Dxf - Dso1/3._dp + Kpp)
+
+Ham(j+1 ,j+4 ) = elec*Kpp
+Ham(j+4 ,j+1 ) = Ham(j+1,j+4)
+
+Ham(j+1 ,j+12 ) = elec*Kpp
+Ham(j+12 ,j+1 ) = Ham(j+1,j+12)
+
+Ham(j+4 ,j+12 ) = elec*Kpp
+Ham(j+12 ,j+4 ) = Ham(j+4,j+12)
+
+Ham(j+1 ,j+2 ) = elec*sqrt(2._dp)*Dso1/3._dp
+Ham(j+2 ,j+1 ) = Ham(j+1,j+2)
+Ham(j+3 ,j+4 ) = Ham(j+1,j+2)
+Ham(j+4 ,j+3 ) = Ham(j+1,j+2)
+Ham(j+11,j+12) = Ham(j+1,j+2)
+Ham(j+12,j+11) = Ham(j+1,j+2)
+Ham(j+12,j+15) = Ham(j+1,j+2)
+Ham(j+15,j+12) = Ham(j+1,j+2)
+
+Ham(j+5 ,j+6 ) = elec*Dso1/3._dp
+Ham(j+6 ,j+5 ) = Ham(j+5,j+6)
+Ham(j+6 ,j+7 ) = Ham(j+5,j+6)
+Ham(j+7 ,j+6 ) = Ham(j+5,j+6)
+Ham(j+8 ,j+10) = Ham(j+5,j+6)
+Ham(j+10,j+8 ) = Ham(j+5,j+6)
+Ham(j+9 ,j+10) = Ham(j+5,j+6)
+Ham(j+10,j+9 ) = Ham(j+5,j+6)
+Ham(j+11,j+13) = Ham(j+5,j+6)
+Ham(j+13,j+11) = Ham(j+5,j+6)
+Ham(j+11,j+14) = Ham(j+5,j+6)
+Ham(j+14,j+11) = Ham(j+5,j+6)
+Ham(j+15,j+13) = Ham(j+5,j+6)
+Ham(j+13,j+15) = Ham(j+5,j+6)
+Ham(j+14,j+15) = Ham(j+5,j+6)
+Ham(j+15,j+14) = Ham(j+5,j+6)
+
+Ham(j+5 ,j+7 ) = elec*Dso1/(-3._dp)
+Ham(j+7 ,j+5 ) = Ham(j+5 ,j+7 )
+Ham(j+8 ,j+9 ) = Ham(j+5 ,j+7 )
+Ham(j+9 ,j+8 ) = Ham(j+5 ,j+7 )
+
+Ham(j+13,j+14) = elec*2._dp*Dso1/3._dp
+Ham(j+14,j+13) = Ham(j+13,j+14)
+
+!TransHam(0 ,j+1 ) = abs(TDM(k))
+!TransHam(0 ,j+4 ) = abs(TDM(k))
+!TransHam(0 ,j+5 ) = abs(TDM(k))
+!TransHam(0 ,j+9 ) = abs(TDM(k))
+!TransHam(0 ,j+12) = abs(TDM(k))
+!TransHam(0 ,j+13) = abs(TDM(k))
+
+j = j + 15
+
+   enddo
+enddo
+
+endif
+
 !H12A
 Ham(1 ,13) = Ham_ex(1,2)
 Ham(2 ,14) = Ham_ex(1,2)

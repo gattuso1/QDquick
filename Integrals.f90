@@ -296,7 +296,7 @@ pulses(t) = pulse1 * Ed01 * cos(omega01*(time-t01)+phase01) * exp(-(time-t01)**2
             pulse2 * Ed02 * cos(omega02*(time-t02)+phase02) * exp(-(time-t02)**2/(2.0_dp*(width02**2._dp))) + &
             pulse3 * Ed03 * cos(omega03*(time-t03)+phase03) * exp(-(time-t03)**2/(2.0_dp*(width03**2._dp)))
 
-write(6,*) t, pulses(t)
+!write(6,*) t, pulses(t)
 endif
 
 if ( Dyn_0 .eq. 'y' ) then

@@ -13,7 +13,7 @@ implicit none
    character*64 :: Re_c, Im_c, syst_n, Re_c_l, Im_c_L, cov, cov2, Pop_c_L
    character*1  :: o_Norm, o_Over, o_Coul, o_DipS, o_Osci, o_Exti, o_DipD, dyn, hamilt, get_ei, finest, get_sp
    character*1  :: Dyn_0, Dyn_ei, inbox, Dyn_L,doFT,CEP1,CEP2,CEP3,nofiles, doCovar,doAbs, noTDM, noCb
-   character*1  :: rdm_ori, Dec_L, Von, random
+   character*1  :: rdm_ori, Dec_L, Von, random, Biex
    logical :: isit
    integer,dimension(5) :: matTDM
    integer,dimension(2) :: matCb
@@ -101,7 +101,7 @@ subroutine getVariables
 
 NAMELIST /outputs/   inbox,rdm_ori,random,get_sp,get_ei,Dyn_0,Dyn_ei,Dyn_L,Dec_L,&
                      doAbs,doFT,nofiles,noTDM,noCb,doCovar
-NAMELIST /elecSt/    model,Von,me,mh,eps,epsout,V0eV,omegaLO,slope,side
+NAMELIST /elecSt/    model,Von,Biex,me,mh,eps,epsout,V0eV,omegaLO,slope,side
 NAMELIST /fineStruc/ Kas,Kbs,Kcs,Kpp,Dso1,Dso2,Dxf
 NAMELIST /pulses/    integ,npulses,t01,t02,t03,timestep,totaltime,omega01,omega02,omega03,phase01,phase02,phase03,&
                      width01,width02,width03,Ed01,Ed02,Ed03,CEP1,CEP2,CEP3,pgeom,vertex,Pmatch
